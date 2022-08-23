@@ -1,5 +1,10 @@
+//https://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-only-if-necessary
+Number.prototype.round = function(places) {
+  return +(Math.round(this + "e+" + places)  + "e-" + places);
+}
+
+
 function AddOneToAllElements(range) {
-  let str = '';
   var rangeLength = range.length;
   var AddOneSet = [];
 
@@ -10,32 +15,24 @@ function AddOneToAllElements(range) {
   return AddOneSet;
 }
 
-function sp_to_kgv2() {
+function SpToKgV3(stonesPoundsRange) {
   // convert stones and pounds/lbs to kilograms.
-  // This function exists as a macro in the parent Google Sheet.
-  // The macro must be called from a cell under the column header "kilos".
-  // That calling cell stores the result of this function.
-  // "kilos" must itself be 2 cells to the right of the column "Enter stones", and
-  // 1 cell to the right of the column "Enter pounds".
-
+  // This is pur-ish JS and operates independently of the spreadsheet.
+  // Any formatting / presentation is up to the Sheet.
   const kg_in_pounds = 0.45359237
   
-  var spreadsheet = SpreadsheetApp.getActive();
-  var sheet = spreadsheet.getActiveSheet();
-  var cellRange = sheet.getActiveCell();
+  var rangeLength = stonesPoundsRange.length;
+  console.log("Number of rows:" + rangeLength);
+  var kgArray = [];
+  var total_pounds = 0;
 
-  var stones = cellRange.offset(0,-2).getValue();
-  var pounds = cellRange.offset(0,-1).getValue();
-  var total_pounds = (stones * 14) + pounds;
-  var kilograms = (total_pounds * kg_in_pounds).round(2);
+   for (let i = 0; i < rangeLength; i++) {
+    total_pounds = (Number(stonesPoundsRange[i][0]) * 14) + Number(stonesPoundsRange[i][1])
+    var kilograms = (total_pounds * kg_in_pounds).round(2);
+    kgArray.push(kilograms);
+  }
   
-/*  console.log(stones)
-  console.log(pounds)
-  console.log(total_pounds);
-  console.log(kilograms);
-*/
-
-  return kilograms
+   return kgArray;
 
 }
 
@@ -58,6 +55,32 @@ function insert2DArrayIntoSheet(range) {
   // If you want to get the value from row r and column c use: range[r][c].
 
   var array = AddOneToAllElements(range)
+
+  return(array)
+}
+
+// =SheetConvertStonesPoundsToKg(
+// Example call from Sheets: =SheetConvertStonesPoundsToKg(E5:E9) (error - only 1 column - too few)
+// Example call from Sheets: =SheetConvertStonesPoundsToKg(E5:F9) (ok - 2 columns, being stones and pounds)
+
+function SheetConvertStonesPoundsToKg(stonesPoundsRange) {
+  var columnCount = stonesPoundsRange[0].length
+  if (columnCount != 2) {
+    return "Error: The passed range must have exactly 2 columns"
+  }
+  var rowCount = stonesPoundsRange.length;
+
+  console.log("number of columns: " + columnCount)
+  console.log("number of rows: " + rowCount)
+
+  
+  // ref length: e.g. C4:C8 returns range.length == 5. This is a basically a JS 2D array
+  // range is treated as javascript's 2d array. You can get the 
+  // number of rows with range.length and the 
+  // number of columns with range[0].length. 
+  // If you want to get the value from row r and column c use: range[r][c].
+
+  var array = SpToKgV3(stonesPoundsRange)
 
   return(array)
 }
