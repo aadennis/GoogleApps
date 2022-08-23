@@ -1,5 +1,8 @@
 function insert2DArrayIntoSheet(range) {
   var columnCount = range[0].length
+  if (columnCount > 1) {
+    return "Error: The passed range must have only 1 column"
+  }
   var rowCount = range.length
   var firstValue = range[0][0];
 
@@ -24,3 +27,4 @@ function insert2DArrayIntoSheet(range) {
 
 //google: .getRange(range).setValues(values)
 // https://webapps.stackexchange.com/questions/10629/how-to-pass-a-range-into-a-custom-function-in-google-spreadsheets
+
