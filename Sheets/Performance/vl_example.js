@@ -13,11 +13,9 @@ function insert2DArrayIntoSheet(range) {
   // number of columns with range[0].length. 
   // If you want to get the value from row r and column c use: range[r][c].
 
-  var ss=SpreadsheetApp.getActive();
-  var sh=ss.getActiveSheet();
   var array = [];
   array.push(33);
-  array.push(323);
+  array.push(firstValue);
 
   return(array)
 }
